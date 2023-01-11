@@ -1,0 +1,108 @@
+{
+    "main": {
+        "path": ["html","body","div","div","div",0,"section","div"]
+    },
+    "main_anime_background_img": {
+        "parent": "main",
+        "path": [0,"@style"]
+    },
+    "main_anime_title_data": {
+        "parent": "main",
+        "path": [1,"div",1,"div",0,"h1"]
+    },
+    "main_anime_title_jp": {
+        "parent": "main_anime_title_data",
+        "path": ["@data-alternativetitles"]
+    },
+    "main_anime_title_de": {
+        "parent": "main_anime_title_data",
+        "path": ["span"]
+    },
+    "main_anime_cover": {
+        "parent": "main",
+        "path": [1,"div",0,"div","noscript","img","@src"]
+    },
+    "main_anime_release_start": {
+        "parent": "main",
+        "path": [1,"div",1,"div",0,"small","span",0,"a","#text"]
+    },
+    "main_anime_release_end": {
+        "parent": "main",
+        "path": [1,"div",1,"div",0,"small","span",1,"a","#text"]
+    },
+    "main_anime_fsk": {
+        "parent": "main",
+        "path": [1,"div",1,"div",0,"div","span"]
+    },
+    "main_anime_id": {
+        "parent": "main",
+        "path": [1,"div",2,"div","@data-series-id"]
+    },
+    "main_anime_review": {
+        "parent": "main",
+        "path": [1,"div",1,"p","@data-full-description"]
+    },
+    "main_anime_trailer": {
+        "parent": "main",
+        "path": [1,"div",2,"div","div",1]
+    },
+    "main_genre_all": {
+        "parent": "main",
+        "path": [1,"div",1,"div",2,"ul","li"]
+    },
+    "main_genre_main": {
+        "parent": "main",
+        "path": [1,"div",1,"div",2,"ul","@data-main-genre"]
+    },
+    "main_genre_name": {
+        "path": ["a","#text"]
+    },
+    "main_cast": {
+        "parent": "main",
+        "path": [1,"div",1,"div",1,"ul","li"]
+    },
+    "main_cast_person_job_sub": {
+        "sub": true,
+        "parent": "main_cast",
+        "path": ["@itemprop"]
+    },
+    "main_cast_person_name": {
+        "sub": true,
+        "parent": "main_cast",
+        "path": ["a","span","#text"]
+    },
+    "main_episode_all": {
+        "path": ["html","body","div","div","div",1,"div",2,"table","tbody","tr"]
+    },
+    "main_episode_id": {
+        "sub": true,
+        "parent": "main_episode_all",
+        "path": ["@data-episode-id"]
+    },
+    "main_episode_season_id": {
+        "sub": true,
+        "parent": "main_episode_all",
+        "path": ["@data-season-id"]
+    },
+    "main_episode_num": {
+        "sub": true,
+        "parent": "main_episode_all",
+        "path": ["td",0,"meta","#content"]
+    },
+    "main_episode_title": {
+        "sub": true,
+        "parent": "main_episode_all",
+        "path": ["td",1,"a","strong"]
+    },
+    "main_episode_title_alt": {
+        "sub": true,
+        "parent": "main_episode_all",
+        "path": ["td",1,"a","span"]
+    },
+    "main_season_count": {
+        "path": ["html","body","div","div","div",1,"div",1,"meta","@content"]
+    },
+    "main_season_number": {
+        "path": ["html","body","div","div","div",1,"div",2,"meta","@content"]
+    }
+}

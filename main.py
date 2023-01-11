@@ -8,6 +8,9 @@ from packages import home
 import xmltodict
 from packages import anime
 load_dotenv();
+from packages import data_analyser
 
-a = anime.Anime("https://aniworld.to/anime/stream/arifureta-from-commonplace-to-worlds-strongest")
-json.dump(xmltodict.parse(re.sub(r"<script(\w|\W)*?>(\w|\W)+?</(no)?script>","",BeautifulSoup(requests.get(url).text,"lxml").__str__())),open("./tests/anime.json","w"),indent=4)
+
+# a = anime.Anime("https://aniworld.to/anime/stream/arifureta-from-commonplace-to-worlds-strongest")
+a = anime.Anime("https://aniworld.to/anime/stream/horimiya")
+print(a)
