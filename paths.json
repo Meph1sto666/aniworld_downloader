@@ -1,4 +1,7 @@
 {
+    "main_url": {
+        "path": ["html","head","meta",5,"@content"]
+    },
     "main": {
         "path": ["html","body","div","div","div",0,"section","div"]
     },
@@ -55,20 +58,27 @@
         "path": [1,"div",1,"div",2,"ul","@data-main-genre"]
     },
     "main_genre_name": {
+        "sub": true,
         "path": ["a","#text"]
     },
     "main_cast": {
         "parent": "main",
         "path": [1,"div",1,"div",1,"ul","li"]
     },
-    "main_cast_person_job_sub": {
+    "main_cast_all": {
         "sub": true,
-        "parent": "main_cast",
+        "path": ["ul","li"]
+    },
+    "main_cast_item_type": {
+        "sub": true,
         "path": ["@itemprop"]
     },
-    "main_cast_person_name": {
+    "main_cast_item_type_alt": {
         "sub": true,
-        "parent": "main_cast",
+        "path": ["@data-content-type"]
+    },
+    "main_cast_item_name": {
+        "sub": true,
         "path": ["a","span","#text"]
     },
     "main_episode_all": {
@@ -76,27 +86,22 @@
     },
     "main_episode_id": {
         "sub": true,
-        "parent": "main_episode_all",
         "path": ["@data-episode-id"]
     },
     "main_episode_season_id": {
         "sub": true,
-        "parent": "main_episode_all",
         "path": ["@data-season-id"]
     },
     "main_episode_num": {
         "sub": true,
-        "parent": "main_episode_all",
         "path": ["td",0,"meta","#content"]
     },
     "main_episode_title": {
         "sub": true,
-        "parent": "main_episode_all",
         "path": ["td",1,"a","strong"]
     },
     "main_episode_title_alt": {
         "sub": true,
-        "parent": "main_episode_all",
         "path": ["td",1,"a","span"]
     },
     "main_season_count": {

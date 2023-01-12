@@ -11,6 +11,7 @@ load_dotenv();
 from packages import data_analyser
 
 
-# a = anime.Anime("https://aniworld.to/anime/stream/arifureta-from-commonplace-to-worlds-strongest")
-a = anime.Anime("https://aniworld.to/anime/stream/horimiya")
+# a = anime.Anime("https://aniworld.to/anime/stream/horimiya")
+a = anime.animeFromJson(json.load(open("./tests/dmp0.json", "r")))
+
 print(a)

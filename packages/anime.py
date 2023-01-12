@@ -4,7 +4,7 @@ from datetime import datetime as Dt
 import json
 import os
 import re
-from packages import data_analyser
+from packages.data_analyser import getContent as getContent
 import requests
 
 class Genre:
@@ -19,20 +19,35 @@ class Genre:
             j["main_genre"] = self.MAIN_GENRE
         return json.dumps(j)
 
-class Person:
-    def __init__(self, name:str, job:str) -> None:
+class Cast:
+    def __init__(self, name:str, castType:str) -> None:
         self.NAME = name
-        self.JOB = job
+        self.CAST_TYPE = castType.lower();
     def __str__(self) -> str:
         return json.dumps({
             "name": self.NAME,
-            "job": self.JOB
+            "cast_type": self.CAST_TYPE
         })
 
+class Season:
+    def __init__(self, seasonNum:int) -> None:
+        self.SEASON_NUM = seasonNum
+        
+class Episode:
+    def __init__(self, episodeNum:int) -> None:
+        self.EPISODE_NUM = episodeNum
+        
+
 class Anime:
-    def __init__(self, url:str) -> None:
-        self.RESPONSE = requests.get(url)
-        self.RAW_DATA = xmltodict.parse(re.sub(r"<script(\w|\W)*?>(\w|\W)+?</(no)?script>","",Bs(requests.get(url).text,"lxml").__str__()))
+    def __init__(self, url:str, rawData:dict=None) -> None:
+        if url == None and rawData == None: return
+        if url != None:
+            self.RESPONSE = requests.get(url)
+            self.RAW_DATA = xmltodict.parse(re.sub(r"<script(\w|\W)*?>(\w|\W)+?</(no)?script>","",Bs(requests.get(url).text,"lxml").__str__()))
+            self.URL = url
+        else:
+            self.RAW_DATA = rawData
+            self.URL = getContent(self.RAW_DATA,"main_url") +"/"
         self.title_data = self.getTitleData()
         self.JP_TITLE = self.getTitleJp()
         self.DE_TITLE = self.getTitleDe()
@@ -42,41 +57,69 @@ class Anime:
         self.RELEASE_END = self.getReleaseEnd()
         self.FSK = self.getFsk()
         self.ID = self.getId()
-
         self.GENRES = self.getGenres()
         self.MAIN_GENRE = self.getMainGenre()
-        
-    def getTitleData(self) -> dict:
-        return dict(data_analyser.getContent(self.RAW_DATA,"main_anime_title_data"))
-    def getTitleDe(self) -> str:
-        return data_analyser.getContent(self.RAW_DATA,"main_anime_title_de")
-    def getTitleJp(self) -> str:
-        return data_analyser.getContent(self.RAW_DATA,"main_anime_title_jp")
-    def getCoverUrl(self) -> str:
-        return data_analyser.getContent(self.RAW_DATA,"main_anime_cover")
-    def getBackgroundUrl(self) -> str:
-        return re.search(r"(?<=background-image: url\()(.+?)(?=\))",data_analyser.getContent(self.RAW_DATA,"main_anime_background_img")).group()
-    def getReleaseStart(self) -> Dt:
-        return Dt(int(data_analyser.getContent(self.RAW_DATA,"main_anime_release_start")),1,1)
-    def getReleaseEnd(self) -> Dt:
-        return Dt(int(data_analyser.getContent(self.RAW_DATA,"main_anime_release_end")),1,1)
-    def getFsk(self) -> int:
-        return int(data_analyser.getContent(self.RAW_DATA,"main_anime_fsk"))
-    def getId(self) -> int:
-        return int(data_analyser.getContent(self.RAW_DATA,"main_anime_id"))
-    def getTrailerData(self) -> str:
-        return data_analyser.getContent(self.RAW_DATA,"main_anime_trailer")
-    def getGenreData(self) -> dict:
-        return data_analyser.getContent(self.RAW_DATA,"main_genre_all")
+        self.CAST = self.getCast()
+        self.SEASON_COUNT = self.getSeasonCount()
+        self.SEASONS = self.getSeasons()
 
+    def getTitleData(self) -> dict:
+        return dict(getContent(self.RAW_DATA,"main_anime_title_data"))
+    def getTitleDe(self) -> str:
+        return getContent(self.RAW_DATA,"main_anime_title_de")
+    def getTitleJp(self) -> str:
+        return getContent(self.RAW_DATA,"main_anime_title_jp")
+    def getCoverUrl(self) -> str:
+        return getContent(self.RAW_DATA,"main_anime_cover")
+    def getBackgroundUrl(self) -> str:
+        return re.search(r"(?<=background-image: url\()(.+?)(?=\))",getContent(self.RAW_DATA,"main_anime_background_img")).group()
+    def getReleaseStart(self) -> Dt:
+        return Dt(int(getContent(self.RAW_DATA,"main_anime_release_start")),1,1)
+    def getReleaseEnd(self) -> Dt:
+        return Dt(int(getContent(self.RAW_DATA,"main_anime_release_end")),1,1)
+    def getFsk(self) -> int:
+        return int(getContent(self.RAW_DATA,"main_anime_fsk"))
+    def getId(self) -> int:
+        return int(getContent(self.RAW_DATA,"main_anime_id"))
+    def getTrailerData(self) -> str:
+        return getContent(self.RAW_DATA,"main_anime_trailer")
+
+    def getGenreData(self) -> dict:
+        return getContent(self.RAW_DATA,"main_genre_all")
     def getGenres(self) -> list[Genre]:
         gl = []
-        [gl.append(Genre(data_analyser.getContent(i,"main_genre_name"))) if data_analyser.getContent(i,"main_genre_name") != None else None for i in self.getGenreData()]
+        [gl.append(Genre(getContent(i,"main_genre_name"))) if getContent(i,"main_genre_name") != None else None for i in self.getGenreData()]
         return gl
     def getMainGenre(self) -> Genre:
-        return Genre(data_analyser.getContent(self.RAW_DATA,"main_genre_main"))
+        return Genre(getContent(self.RAW_DATA,"main_genre_main"))
+        
+    def getCastData(self) -> dict:
+        return getContent(self.RAW_DATA,"main_cast")
+    def getCast(self) -> list[Cast]:
+        cl = []
+        for j in self.getCastData():
+            j:dict
+            n = getContent(j, "main_cast_all")
+            if n == None: continue
+            if type(n) == list:
+                for p in n:
+                    pt = getContent(p, "main_cast_item_name"), getContent(p, "main_cast_item_type")
+                    if all([i != None for i in pt]):
+                        cl.append(Cast(*pt))
+            else:
+                ptAlt = getContent(n, "main_cast_item_name"), getContent(n, "main_cast_item_type_alt")
+                if all([i != None for i in ptAlt]):
+                    cl.append(Cast(*ptAlt))
+        return cl
     
-    
+    def getSeasonCount(self) -> int:
+        return int(getContent(self.RAW_DATA,"main_season_count"))
+    def createSeasonUrl(self, seasonNum:int) -> str:
+        return self.URL + os.getenv("AW_URL_SEASON_KEY") + str(seasonNum)
+    def getSeasons(self) -> list[Season]:
+        pass
+        
+        
     def createCoverUrl(self) -> str:
         return os.getenv("AW_URL_HOME") + self.COVER
     def createBackgroundUrl(self) -> str:
@@ -92,15 +135,13 @@ class Anime:
             "release_start": self.RELEASE_START.isoformat(),
             "release_end": self.RELEASE_END.isoformat(),
             "fsk": self.FSK,
+            "cast": [g.__str__() for g in self.CAST],
+            "season_count": self.SEASON_COUNT,
             "genres": {
                 "main_genre": self.MAIN_GENRE.__str__(),
                 "sub_genre": [g.__str__() for g in self.GENRES]
             }
         })
-class Season:
-    def __init__(self, seasonNum:int) -> None:
-        self.SEASON_NUM = seasonNum
         
-class Episode:
-    def __init__(self, episodeNum:int) -> None:
-        self.EPISODE_NUM = episodeNum
+def animeFromJson(json) -> Anime:
+    return Anime(None, json);

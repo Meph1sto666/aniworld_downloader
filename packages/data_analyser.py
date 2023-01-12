@@ -13,8 +13,11 @@ def createPath(k:str) -> dict:
 			p.reverse()
 			path.extend(p)
 			path.reverse()
-		if s.get("parent") == None: i = False
-		s = l.get(s.get("parent"))
+			if s.get("parent") == None: i = False
+			s = l.get(s.get("parent"))
+		else:
+			path.extend(s.get("path"))
+			i = False
 	r = { "path": path };
 	if l.get(k).get("sub"):
 		r["sub"] = True
