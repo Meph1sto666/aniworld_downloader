@@ -81,33 +81,73 @@
         "sub": true,
         "path": ["a","span","#text"]
     },
-    "main_episode_all": {
-        "path": ["html","body","div","div","div",1,"div",2,"table","tbody","tr"]
-    },
-    "main_episode_id": {
-        "sub": true,
-        "path": ["@data-episode-id"]
-    },
-    "main_episode_season_id": {
-        "sub": true,
-        "path": ["@data-season-id"]
-    },
-    "main_episode_num": {
-        "sub": true,
-        "path": ["td",0,"meta","#content"]
-    },
-    "main_episode_title": {
-        "sub": true,
-        "path": ["td",1,"a","strong"]
-    },
-    "main_episode_title_alt": {
-        "sub": true,
-        "path": ["td",1,"a","span"]
-    },
+
     "main_season_count": {
         "path": ["html","body","div","div","div",1,"div",1,"meta","@content"]
     },
     "main_season_number": {
         "path": ["html","body","div","div","div",1,"div",2,"meta","@content"]
+    },
+
+    "season_url": {
+        "path": ["html","head","meta",5,"@content"]
+    },
+    "season_episodes_all": {
+        "path": null
+    },
+
+
+    "episode_data": {
+        "path": ["html","body","div","div","div",1,"div",2,"div"]
+    },
+    "episode_num": {
+        "parent": "episode_data",
+        "path": ["@data-episode"]
+    },
+    "episode_id": {
+        "parent": "episode_data",
+        "path": ["@data-episode-id"]
+    },
+    "episode_season_id": {
+        "parent": "episode_data",
+        "path": ["@data-season-id"]
+    },
+    "episode_titles": {
+        "parent": "episode_data",
+        "path": ["h2"]
+    },
+
+    "episode_description": {
+        "paren": "episode_data",
+        "path": ["p", "#text"]
+    },
+
+    "episode_language_data": {
+        "parent": "episode_data",
+        "path": [4,"div",0,"div","img"]
+    },
+    "episode_language_name": {
+        "sub": true,
+        "path": ["@title"]
+    },
+    "episode_language_id": {
+        "sub": true,
+        "path": ["@data-lang-key"]
+    },
+    "stream_data": {
+        "parent": "episode_data",
+        "path": [4,"ul","li"]
+    },
+    "stream_language_id": {
+        "sub": true,
+        "path": ["@data-lang-key"]
+    },
+    "stream_redirect_id": {
+        "sub": true,
+        "path": ["@data-link-id"]
+    },
+    "stream_host_name": {
+        "sub": true,
+        "path": ["div","a","h4"]
     }
 }

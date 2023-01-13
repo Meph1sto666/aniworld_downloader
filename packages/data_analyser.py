@@ -19,7 +19,7 @@ def createPath(k:str) -> dict:
 			path.extend(s.get("path"))
 			i = False
 	r = { "path": path };
-	if l.get(k).get("sub"):
+	if dict(l.get(k)).get("sub"):
 		r["sub"] = True
 	return r
 

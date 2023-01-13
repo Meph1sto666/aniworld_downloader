@@ -6,44 +6,16 @@ import os
 import re
 from packages.data_analyser import getContent as getContent
 import requests
-
-class Genre:
-    def __init__(self, name:str, mainGenre:bool=False) -> None:
-        self.MAIN_GENRE = mainGenre
-        self.NAME = name.lower()
-    def __str__(self) -> str:
-        j = {
-            "name": self.NAME
-        }
-        if self.MAIN_GENRE:
-            j["main_genre"] = self.MAIN_GENRE
-        return json.dumps(j)
-
-class Cast:
-    def __init__(self, name:str, castType:str) -> None:
-        self.NAME = name
-        self.CAST_TYPE = castType.lower();
-    def __str__(self) -> str:
-        return json.dumps({
-            "name": self.NAME,
-            "cast_type": self.CAST_TYPE
-        })
-
-class Season:
-    def __init__(self, seasonNum:int) -> None:
-        self.SEASON_NUM = seasonNum
-        
-class Episode:
-    def __init__(self, episodeNum:int) -> None:
-        self.EPISODE_NUM = episodeNum
-        
+from season import Season
+from genre import Genre
+from cast import Cast
 
 class Anime:
     def __init__(self, url:str, rawData:dict=None) -> None:
         if url == None and rawData == None: return
         if url != None:
             self.RESPONSE = requests.get(url)
-            self.RAW_DATA = xmltodict.parse(re.sub(r"<script(\w|\W)*?>(\w|\W)+?</(no)?script>","",Bs(requests.get(url).text,"lxml").__str__()))
+            self.RAW_DATA = xmltodict.parse(re.sub(r"<script(\w|\W)*?>(\w|\W)+?</(no)?script>","",Bs(self.RESPONSE.text,"lxml").__str__()))
             self.URL = url
         else:
             self.RAW_DATA = rawData
@@ -114,8 +86,6 @@ class Anime:
     
     def getSeasonCount(self) -> int:
         return int(getContent(self.RAW_DATA,"main_season_count"))
-    def createSeasonUrl(self, seasonNum:int) -> str:
-        return self.URL + os.getenv("AW_URL_SEASON_KEY") + str(seasonNum)
     def getSeasons(self) -> list[Season]:
         pass
         
@@ -137,6 +107,7 @@ class Anime:
             "fsk": self.FSK,
             "cast": [g.__str__() for g in self.CAST],
             "season_count": self.SEASON_COUNT,
+            "seasons": [s.__str__() for s in self.SEASONS],
             "genres": {
                 "main_genre": self.MAIN_GENRE.__str__(),
                 "sub_genre": [g.__str__() for g in self.GENRES]
