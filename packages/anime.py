@@ -6,9 +6,9 @@ import os
 import re
 from packages.data_analyser import getContent as getContent
 import requests
-from season import Season
-from genre import Genre
-from cast import Cast
+from packages.season import Season
+from packages.genre import Genre
+from packages.cast import Cast
 
 class Anime:
     def __init__(self, url:str, rawData:dict=None) -> None:
@@ -87,7 +87,7 @@ class Anime:
     def getSeasonCount(self) -> int:
         return int(getContent(self.RAW_DATA,"main_season_count"))
     def getSeasons(self) -> list[Season]:
-        pass
+        return [Season(self.URL, s) for s in range(self.SEASON_COUNT)]
         
         
     def createCoverUrl(self) -> str:

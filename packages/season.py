@@ -6,7 +6,7 @@ import os
 import re
 from packages.data_analyser import getContent as getContent
 import requests
-from episode import Episode
+from packages.episode import Episode
 
 class Season:
     def __init__(self, animeUrl:str, seasonNum:int, rawData:dict=None) -> None:
@@ -18,11 +18,11 @@ class Season:
             self.RAW_DATA = xmltodict.parse(re.sub(r"<script(\w|\W)*?>(\w|\W)+?</(no)?script>","",Bs(self.RESPONSE.text,"lxml").__str__()))
         else:
             self.RAW_DATA = rawData
-            self.URL = getContent("season_url") + "/"
+            self.URL = getContent("main_url") + "/"
         self.EPISODES = self.getEpisodes()
         
         
     def getEpisodes(self) -> list[Episode]:
-        e = [];
+        el = [];
         
-        return e
+        return el
