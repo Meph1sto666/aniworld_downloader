@@ -85,12 +85,31 @@
     "main_season_count": {
         "path": ["html","body","div","div","div",1,"div",1,"meta","@content"]
     },
+    "main_seasons_all": {
+        "path": ["html","body","div","div","div",1,"div",1,"ul",0,"li"]
+    },
+    "main_season_url": {
+        "sub": true,
+        "path": ["a","@href"]
+    },
     "main_season_number": {
         "path": ["html","body","div","div","div",1,"div",2,"meta","@content"]
     },
 
     "season_episodes_all": {
-        "path": null
+        "path": ["html","body","div","div","div",1,"div",1,"ul",1,"li"]
+    },
+    "season_episode_num": {
+        "sub": true,
+        "path": ["a","#text"]
+    },
+    "season_episode_id": {
+        "sub": true,
+        "path": ["a","@data-episode-id"]
+    },
+    "season_episode_url": {
+        "sub": true,
+        "path": ["a","@href"]
     },
 
 
@@ -99,15 +118,15 @@
     },
     "episode_num": {
         "parent": "episode_data",
-        "path": ["@data-episode"]
+        "path": [2,"@data-episode"]
     },
     "episode_id": {
         "parent": "episode_data",
-        "path": ["@data-episode-id"]
+        "path": [2,"@data-episode-id"]
     },
     "episode_season_id": {
         "parent": "episode_data",
-        "path": ["@data-season-id"]
+        "path": [2,"@data-season"]
     },
     "episode_titles": {
         "parent": "episode_data",

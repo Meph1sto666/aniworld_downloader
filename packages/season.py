@@ -4,25 +4,39 @@ from datetime import datetime as Dt
 import json
 import os
 import re
-from packages.data_analyser import getContent as getContent
+from packages.data_analyser import getContent
 import requests
 from packages.episode import Episode
 
 class Season:
-    def __init__(self, animeUrl:str, seasonNum:int, rawData:dict=None) -> None:
-        if animeUrl == None and rawData == None: return;
-        self.SEASON_NUM = seasonNum
-        if animeUrl != None:
-            self.URL = animeUrl + os.getenv("AW_URL_SEASON_KEY") + str(seasonNum)
-            self.RESPONSE = requests.get(self.URL)
-            self.RAW_DATA = xmltodict.parse(re.sub(r"<script(\w|\W)*?>(\w|\W)+?</(no)?script>","",Bs(self.RESPONSE.text,"lxml").__str__()))
-        else:
-            self.RAW_DATA = rawData
-            self.URL = getContent("main_url") + "/"
-        self.EPISODES = self.getEpisodes()
-        
-        
-    def getEpisodes(self) -> list[Episode]:
-        el = [];
-        
-        return el
+	def __init__(self, seasonUrl:str) -> None:
+		if seasonUrl == None: return;
+		# self.SEASON_NUM = seasonNum
+		self.RESPONSE = None
+		self.URL = seasonUrl + "/"
+		self.RESPONSE = requests.get(self.URL)
+		self.RAW_DATA = xmltodict.parse(re.sub(r"<script(\w|\W)*?>(\w|\W)+?</(no)?script>","",Bs(self.RESPONSE.text,"lxml").__str__()))
+		self.TYPE = None;
+		if "film" in self.URL.lower():
+			self.TYPE = "other"
+		elif "season" in self.URL.lower():
+			self.TYPE = "season"
+		self.EPISODES_DATA = getContent(self.RAW_DATA,"season_episodes_all")
+		self.EPISODES = self.getEpisodes()
+		
+	def getEpisodes(self) -> list[Episode]:
+		el = []
+		for e in self.EPISODES_DATA:
+			if getContent(e, "season_episode_url") != None:
+				el.append(Episode(os.getenv("AW_URL_HOME") + getContent(e, "season_episode_url")))
+		return el
+
+	def __json__(self) -> dict:
+		return {
+			"url": self.URL,
+			"type": self.TYPE,
+			"episodes": [e.__json__() for e in self.EPISODES]
+		}
+
+	def __str__(self) -> str:
+		return json.dumps(self.__json__())

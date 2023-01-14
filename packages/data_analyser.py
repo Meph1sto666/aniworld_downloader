@@ -23,7 +23,7 @@ def createPath(k:str) -> dict:
 		r["sub"] = True
 	return r
 
-def getContent(data, k:str):
+def getContent(data, k:str) -> list | dict | None:
 	pathData = createPath(k)
 	try:
 		for p in pathData.get("path"):
