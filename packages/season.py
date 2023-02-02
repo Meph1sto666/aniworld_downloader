@@ -12,10 +12,9 @@ class Season:
 	def __init__(self, seasonUrl:str) -> None:
 		if seasonUrl == None: return;
 		# self.SEASON_NUM = seasonNum
-		self.RESPONSE = None
 		self.URL = seasonUrl + "/"
 		self.RESPONSE = requests.get(self.URL)
-		self.RAW_DATA = xmltodict.parse(re.sub(r"<script(\w|\W)*?>(\w|\W)+?</(no)?script>","",Bs(self.RESPONSE.text,"lxml").__str__()))
+		self.RAW_DATA = xmltodict.parse(re.sub(r"<script(\w|\W)*?>(\w|\W)*?</(no)?script>","",Bs(self.RESPONSE.text,"lxml").__str__()))
 		self.TYPE = None;
 		if "film" in self.URL.lower():
 			self.TYPE = "other"
@@ -23,6 +22,8 @@ class Season:
 			self.TYPE = "season"
 		self.EPISODES_DATA = getContent(self.RAW_DATA,"season_episodes_all")
 		self.EPISODES = self.getEpisodes()
+		del self.RESPONSE
+		del self.RAW_DATA
 		
 	def getEpisodes(self) -> list[Episode]:
 		el = []

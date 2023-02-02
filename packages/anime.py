@@ -1,3 +1,4 @@
+import pickle
 import xmltodict
 from bs4 import BeautifulSoup as Bs
 from datetime import datetime as Dt
@@ -13,15 +14,9 @@ from packages.cast import Cast
 class Anime:
 	def __init__(self, url:str, rawData:dict=None) -> None:
 		if url == None and rawData == None: return
-		self.RESPONSE = None
-		if url != None:
-			self.RESPONSE = requests.get(url)
-			self.RAW_DATA = xmltodict.parse(re.sub(r"<script(\w|\W)*?>(\w|\W)+?</(no)?script>","",Bs(self.RESPONSE.text,"lxml").__str__()))
-			self.URL = url + "/"
-			print(self.URL)
-		else: # only for testing without internet
-			self.RAW_DATA = rawData
-			self.URL = getContent(self.RAW_DATA,"main_url") +"/"
+		self.RESPONSE = requests.get(url)
+		self.RAW_DATA = xmltodict.parse(re.sub(r"<script(\w|\W)*?>(\w|\W)*?</(no)?script>","",Bs(self.RESPONSE.text,"lxml").__str__()))
+		self.URL = url + "/"
 		self.title_data = self.getTitleData()
 		self.JP_TITLE = self.getTitleJp()
 		self.DE_TITLE = self.getTitleDe()
@@ -36,6 +31,8 @@ class Anime:
 		self.CAST = self.getCast()
 		self.SEASON_DATA = self.getSeasonData()
 		self.SEASONS = self.getSeasons()
+		del self.RAW_DATA
+		del self.RESPONSE
 
 	def getTitleData(self) -> dict:
 		return dict(getContent(self.RAW_DATA,"main_anime_title_data"))
@@ -123,15 +120,23 @@ class Anime:
 			"release_end": self.RELEASE_END.isoformat(),
 			"fsk": self.FSK,
 			"cast": [g.__json__() for g in self.CAST],
-			"seasons": [s.__json__() for s in self.SEASONS],
 			"genres": {
 				"main_genre": self.MAIN_GENRE.__json__(),
 				"sub_genre": [g.__json__() for g in self.GENRES]
-			}
+			},
+			"seasons": [s.__json__() for s in self.SEASONS]
 		}
 	
 	def __str__(self) -> str:
 		return json.dumps(self.__json__())
+	def save(self) -> None:
+		path = f"./data/saves/"
+		os.makedirs(path) if not os.path.exists(path) else None;
+		pickle.dump(self,open(path + f"{self.ID}.awds","wb"),pickle.HIGHEST_PROTOCOL)
 		
 def animeFromJson(json) -> Anime:
 	return Anime(None, json);
+
+def load(id:int) -> Anime:
+	path = f"./data/saves/{id}.awds"
+	return pickle.load(open(path,"rb")) if os.path.exists(path) else None

@@ -1,3 +1,4 @@
+import typing
 import xmltodict
 from bs4 import BeautifulSoup as Bs
 from datetime import datetime as Dt
@@ -15,17 +16,17 @@ class Episode:
 		if episodeUrl == None: return;
 		self.URL = episodeUrl + "/"
 		self.RESPONSE = requests.get(self.URL)
-		self.RAW_DATA = xmltodict.parse(re.sub(r"<script(\w|\W)*?>(\w|\W)+?</(no)?script>","",Bs(self.RESPONSE.text,"lxml").__str__()))
-		# json.dump(self.RAW_DATA,open("./tests/dmp6.json", "w"),indent=4)
+		self.RAW_DATA = xmltodict.parse(re.sub(r"<script(\w|\W)*?>(\w|\W)*?</(no)?script>","",Bs(self.RESPONSE.text,"lxml").__str__()))
 		self.EPISODE_NUM = getContent(self.RAW_DATA,"episode_num")
 		self.EPISODE_ID = int(getContent(self.RAW_DATA, "episode_id"))
 		self.LANGUAGE_DATA = getContent(self.RAW_DATA,"episode_language_data")
 		self.SEASON_ID = int(getContent(self.RAW_DATA, "episode_season_id"))
 		self.TITLES = getContent(self.RAW_DATA, "episode_titles")
 		self.DESCRIPTION = getContent(self.RAW_DATA, "episode_description")
-		
 		self.LANGUAGES = self.getLanguages()
 		self.STREAMS = self.getStreams()
+		del self.RESPONSE
+		del self.RAW_DATA
 		
 	def getStreamData(self) -> dict:
 		return getContent(self.RAW_DATA, "stream_data")
@@ -51,8 +52,18 @@ class Episode:
 			lang += "-sub"
 		return lang
 
-	def download(self, language:str, host:str) -> None:
-		print(language, host)
+	def download(self, host:str, language:str) -> None:
+		streams = self.streamFilter(host, language)
+		if len(streams) < 1:
+			print("FAILED TO DOWNLOAD! NO STREAMS MATCHIN TAGS FOUND")
+			return
+		url = streams[0].getVideoUrl()
+		with open("downloads/" + str(self.EPISODE_ID) + ".mp4", "wb") as f: #NOTE: FIIIIIIIIIX naming
+			f:typing.TextIO
+			with requests.get(url) as r:
+				r:requests.Response
+				for c in r.iter_content(1024):
+					f.write(c)
 		
 	
 	def __json__(self) -> dict:
@@ -69,3 +80,11 @@ class Episode:
 	
 	def __str__(self) -> str:
 		return json.dumps(self.__json__())
+
+	def streamFilter(self, fHost:str=None, fLang:str=None, invert:bool=False) -> list[Stream]:
+		streams = self.STREAMS;
+		if fHost != None:
+			streams = list(filter(lambda s: (s.HOST.lower() == fHost) != invert, streams));
+		if fLang != None:
+			streams = list(filter(lambda s: (s.LANGUAGE.lower() == fLang) != invert, streams));
+		return streams

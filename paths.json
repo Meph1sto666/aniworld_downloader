@@ -166,5 +166,16 @@
     "stream_host_name": {
         "sub": true,
         "path": ["div","a","h4"]
+    },
+
+    "stream_vidoza_video_source_2": {
+        "path": ["html","body","div",0,"div",1,"div","div",2,"video","source","@src"]
+    },
+    "stream_vidoza_video_source": {
+        "path": ["html","body","div","div",1,"div","div",2,"video","source","@src"]
+    },
+
+    "captcha_anchor": {
+        "path": ["html","body","div",0,"div","div","div","div",0,"iframe","@src"]
     }
 }
