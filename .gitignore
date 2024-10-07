@@ -1,3 +1,5 @@
-/dmp.html
-/packages/__pycache__/
+__pycache__
 /tests
+/venv
+/saves
+/downloads
